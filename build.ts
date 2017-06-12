@@ -1,14 +1,14 @@
 #!/usr/bin/env node
 
-import * as fs from "fs";
-import * as ts from "typescript";
-import * as chalk from "chalk";
-import * as args from "args";
-import * as path from "path";
-import * as rollup from "rollup";
-import * as rts from "rollup-plugin-typescript";
+import * as fs      from "fs";
+import * as ts      from "typescript";
+import * as chalk   from "chalk";
+import * as args    from "args";
+import * as path    from "path";
+import * as rollup  from "rollup";
+import * as rts     from "rollup-plugin-typescript";
 import * as ruglify from "rollup-plugin-uglify";
-import { minify } from 'uglify-es';
+import { minify }   from 'uglify-es';
 
 const allRWEPermissions = parseInt("0777", 8);
 function walk(dir: string, results?: string[]): string[] {
