@@ -1,4 +1,5 @@
 import knex = require('./knex');
+import { IUser } from './iuser';
 
 function User(){
   return knex('user');
@@ -21,7 +22,18 @@ async function getUsers(): Promise<any>{
   return User().select();
 }
 
+/**
+ * Register a user
+ * @param  {IUser}        user [description]
+ * @return {Promise<any>}      [description]
+ */
+async function registerUser(user: IUser): Promise<any>{
+  console.log(user);
+  return User().insert(user, 'id').then(list => list[0]);
+}
+
 export = {
   getUserByUsername: getUserByUsername,
-  getUsers: getUsers
+  getUsers: getUsers,
+  registerUser: registerUser
 }
