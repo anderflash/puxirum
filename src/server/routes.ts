@@ -8,7 +8,14 @@ import db = require('./db');
  * @return {Promise<void>}             [description]
  */
 async function apiRegisterUser(ctx: Router.IRouterContext): Promise<void> {
-  return new Promise<void>((resolve, reject) => resolve());
+  if(ctx.request.body.username && ctx.request.body.password && ctx.request.body.email){
+    let id = await db.registerUser(ctx.request.body);
+    ctx.body = { id:id };
+  }
+  else
+    ctx.throw("Usuário inválido ou inexistente. Passe um usuário válido (email, usuario e senha)", 400);
+    
+  //return new Promise<void>((resolve, reject) => resolve());
 }
 
 async function apiGetAllUsers(ctx: Router.IRouterContext): Promise<void> {

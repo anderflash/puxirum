@@ -2,8 +2,13 @@
 
 import * as fs from "fs";
 import * as ts from "typescript";
+import * as chalk from "chalk";
 import * as args from "args";
 import * as path from "path";
+import * as rollup from "rollup";
+import * as rts from "rollup-plugin-typescript";
+import * as ruglify from "rollup-plugin-uglify";
+import { minify } from 'uglify-es';
 
 const allRWEPermissions = parseInt("0777", 8);
 function walk(dir: string, results?: string[]): string[] {
@@ -18,28 +23,6 @@ function walk(dir: string, results?: string[]): string[] {
     }
   });
   return results;
-
-  // fs.readdir(dir, function(err, list) {
-  //   if (err) return done(err);
-  //   var i = 0;
-  //   (function next() {
-  //     var file = list[i++];
-  //     if (!file) return done(null, results);
-  //     file = path.join(dir, file);
-  //     fs.stat(file, function(err, stat) {
-  //       if (stat && stat.isDirectory()) {
-  //         walk(file, function(err, res) {
-  //           results = results.concat(res);
-  //           next();
-  //         });
-  //       } else {
-  //         results.push(file);
-  //         next();
-  //       }
-  //     });
-  //   })();
-  // });
-
 };
 function ensureFilePathExists(filepath: string, mask: number = allRWEPermissions): Promise<void> {
   return new Promise<void>(
@@ -53,19 +36,6 @@ function ensureFilePathExists(filepath: string, mask: number = allRWEPermissions
         }
         return curDir;
       }, initDir);
-
-      // fs.mkdir(path, mask, function(err: NodeJS.ErrnoException): void {
-      //   console.log(err);
-      //   if (err) {
-      //     if (err.code === "EEXIST") {
-      //       resolve(null); // ignore the error if the folder already exists
-      //     } else {
-      //       reject(err); // something else went wrong
-      //     }
-      //   } else {
-      //     resolve(null); // successfully created folder
-      //   }
-      // });
     }
   );
 }
@@ -163,15 +133,57 @@ function tsWatchDir(dir: string, options: ts.CompilerOptions) {
   }
 }
 
+
+function buildIndex() {
+  // Get the list of components from the module
+
+  // Open index
+
+  // Insert templates in the index
+
+  // Compress index
+
+  // Save index
+  fs.createReadStream('src/client/index.html').pipe(fs.createWriteStream('dist/client/index.html'));
+}
+
+function buildClientScript() {
+  rollup.rollup({
+    entry: 'src/client/app.module.ts',
+
+    plugins: [
+      rts({typescript: ts})
+      //ruglify({}, minify)
+    ]
+  }).then(bundle => {
+    bundle.write({
+      format: 'cjs',
+      dest: 'dist/client/main.js'
+    });
+  });
+}
+
 // Start the watcher
 args
-  .option('watch', 'Watch changes');
+  .option('watch', 'Watch changes')
+  .option('client', 'Build client')
+  .option('server', 'Build server');
 const flags = args.parse(process.argv);
 
 if(flags.w){
   tsWatchDir("src/server", { module: ts.ModuleKind.CommonJS, outDir: "dist/server" });
 }
 
-// Copy static client files
 ensureFilePathExists("dist/client");
-fs.createReadStream('src/client/index.html').pipe(fs.createWriteStream('dist/client/index.html'));
+
+// Build client
+if(flags.c){
+
+  // Build index
+  console.log(chalk.green("Building index..."));
+  buildIndex();
+
+  // Compress Javascript files
+  console.log(chalk.green("Building scripts..."));
+  buildClientScript();
+}
