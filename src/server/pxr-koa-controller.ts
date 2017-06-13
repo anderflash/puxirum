@@ -56,10 +56,8 @@ export class PXRKoaController {
     if((body.username || body.email) && body.password && body.password.length >= 8 && body.password.length <= 32){
       try {
         let token = await this.controller.login(body);
-        console.log(token);
         ctx.body = {token: token};
       } catch(e) {
-        console.error(e);
         ctx.throw("Error authenticating the user. Try to pass valid credentials", 400);
       }
     }
@@ -75,10 +73,8 @@ export class PXRKoaController {
   async getProjects(ctx: Router.IRouterContext): Promise<void> {
     try {
       let projects = await this.controller.getProjects(this.getToken(ctx));
-      console.log(projects);
       ctx.body = { projects: projects };
     } catch(e) {
-      console.error(e);
       ctx.throw("There is an error listing the projects of the user. Are you logged?", 400);
     }
   }
