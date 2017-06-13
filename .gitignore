@@ -62,4 +62,4 @@ db/**/*.js
 src/**/*.js
 build.js
 knexfile.js
-package-lock.json
+*.pem

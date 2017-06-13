@@ -28,6 +28,9 @@ async function apiGetUsers(ctx: Router.IRouterContext): Promise<void> {
   else
     ctx.body = {result: await db.getUsers()};
 }
+async function loginUser(ctx: Router.IRouterContext): Promise<void> {
+  db.login(ctx.body.username, ctx.body.password);
+}
 
 /**
  * Our routes
@@ -38,6 +41,11 @@ export const apiRoutes: IRoute[] = [
     method: 'post',
     path: '/user',
     action: apiRegisterUser
+  },
+  {
+    method: 'post',
+    path: '/login',
+    action: apiLoginUser
   },
   {
     method: 'get',

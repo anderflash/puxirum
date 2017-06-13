@@ -1,6 +1,10 @@
-import knex = require('./knex');
-import { IUser } from './iuser';
+import * as jwt             from 'koa-jwt';
 
+import { IUser }            from './iuser';
+import { ILoginInputData }  from './ilogin-input-data';
+import knex = require('./knex');
+
+// Tables
 function User(){
   return knex('user');
 }
@@ -27,13 +31,29 @@ async function getUsers(): Promise<any>{
  * @param  {IUser}        user [description]
  * @return {Promise<any>}      [description]
  */
-async function registerUser(user: IUser): Promise<any>{
+async function register(user: IUser): Promise<any>{
   console.log(user);
   return User().insert(user, 'id').then(list => list[0]);
+}
+
+/**
+ * Authenticating a user
+ * @param  {ILoginData}   data [description]
+ * @return {Promise<any>}      [description]
+ */
+async function login(data: ILoginInputData): Promise<any> {
+  if(!data || !data.email || !data.username){
+    throw "Erro de login";
+  }
+  return User()
+    .update({logged_at: new Date()})
+    .where(data)
+    .returning('id').then(list => list[0]);
 }
 
 export = {
   getUserByUsername: getUserByUsername,
   getUsers: getUsers,
-  registerUser: registerUser
+  register: register,
+  login: login
 }
