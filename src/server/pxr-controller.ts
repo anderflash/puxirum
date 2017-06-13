@@ -2,6 +2,7 @@ import * as fs              from 'fs';
 import * as jwt             from 'jsonwebtoken';
 
 import { IUser }            from './iuser';
+import { IProject }         from './iproject';
 import { ILoginInputData }  from './ilogin-input-data';
 import { PXRDatabase }      from './pxr-database';
 
@@ -48,6 +49,11 @@ export class PXRController {
    */
   async getProjects(token: string): Promise<any[]> {
     return await this.db.getProjects(this.getId(this.getPayload(token)));
+  }
+
+  async addProject(token: string, project: IProject) {
+    project.owner = this.getId(this.getPayload(token));
+    return await this.db.addProject(project);
   }
 
   /**
