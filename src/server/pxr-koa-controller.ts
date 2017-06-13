@@ -79,6 +79,20 @@ export class PXRKoaController {
     }
   }
 
+  async addProject(ctx: Router.IRouterContext): Promise<void> {
+    let body = ctx.request.body;
+    if(!body.name){
+      ctx.throw("Empty project name. Send a valid name", 400);
+    } else {
+      try{
+        let projectId = await this.controller.addProject(this.getToken(ctx), {name: body.name});
+        ctx.body = {id: projectId};
+      } catch(e) {
+        ctx.throw("There is an error with project creation", 400);
+      }
+    }
+  }
+
   /**
    * Get JWT token from Koa context
    * @param  {Router.IRouterContext} ctx [description]

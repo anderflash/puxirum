@@ -35,6 +35,7 @@ apiUnprotectedRouter.post('/login'   , async ctx => pxrKoaController.login(ctx))
 
 // ... protected routes.
 apiProtectedRouter.get   ('/projects', async ctx => pxrKoaController.getProjects(ctx));
+apiProtectedRouter.post  ('/projects', async ctx => pxrKoaController.addProject(ctx));
 
 // Attaching our middlewares
 // ----------------------------------------------------------------------------

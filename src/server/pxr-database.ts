@@ -1,4 +1,5 @@
 import { IUser }            from './iuser';
+import { IProject }         from './iproject';
 import { ILoginInputData }  from './ilogin-input-data';
 import knex = require('./knex');
 
@@ -45,5 +46,14 @@ export class PXRDatabase {
    */
   async getProjects(userId: number): Promise<any[]> {
     return await knex("project").select().where({owner: userId});
+  }
+
+  /**
+   * Add a project
+   * @param  {IProject}        project [description]
+   * @return {Promise<number>}         [description]
+   */
+  async addProject(project: IProject): Promise<number> {
+    return await knex("project").insert(project, "id").then(list => list[0]);
   }
 }
